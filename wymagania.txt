@@ -2,8 +2,8 @@
 
 
 1. System użytkowników
-Rejestracja nowych użytkowników (login, email, hasło)
-Logowanie i wylogowanie
+Rejestracja nowych użytkowników (login, email, hasło) - jest
+Logowanie i wylogowanie 
 Walidacja danych (np. unikalny login/email)
 Możliwość edycji profilu (np. avatar, opis)
 

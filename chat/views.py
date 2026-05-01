@@ -1,8 +1,11 @@
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import get_user_model
 from .models import Channel
-
+from django.contrib import messages
+from django.core.exceptions import ValidationError
+from .models import Channel, Message
 User = get_user_model()
 
 
@@ -129,5 +132,47 @@ def join_channel(request, channel_id):
     channel = get_object_or_404(Channel, id=channel_id, channel_type='public')
 
     channel.members.add(request.user)
+
+    return redirect('channel_room', channel_id=channel.id)
+
+
+@login_required
+def send_attachment(request, channel_id):
+    channel = get_object_or_404(Channel, id=channel_id)
+
+    if request.method == 'POST':
+        text = request.POST.get('content', '').strip()
+        image = request.FILES.get('image')
+        audio = request.FILES.get('audio')
+
+        if image:
+            msg = Message(
+                author=request.user,
+                channel=channel,
+                message_type='image',
+                content=text,
+                image=image
+            )
+        elif audio:
+            msg = Message(
+                author=request.user,
+                channel=channel,
+                message_type='audio',
+                content=text,
+                audio=audio
+            )
+        else:
+            msg = Message(
+                author=request.user,
+                channel=channel,
+                message_type='text',
+                content=text
+            )
+
+        try:
+            msg.full_clean()
+            msg.save()
+        except ValidationError as e:
+            messages.error(request, e.message_dict if hasattr(e, 'message_dict') else e.messages)
 
     return redirect('channel_room', channel_id=channel.id)

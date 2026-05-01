@@ -18,10 +18,20 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from core.views import home_view
+from discord_clone import views
+from django.shortcuts import redirect
+
+handler400 = 'discord_clone.views.error_400'
+handler403 = 'discord_clone.views.error_403'
+handler404 = 'discord_clone.views.error_404'
+handler500 = 'discord_clone.views.error_500'
 
 urlpatterns = [
+    path('', views.root_redirect, name='root'),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('chat/', include('chat.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

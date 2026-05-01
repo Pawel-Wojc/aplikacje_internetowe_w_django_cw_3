@@ -87,6 +87,25 @@
         <div class="col-12 col-lg-6 col-xl-7 d-flex flex-column chat-main">
             <div id="chat-messages" class="flex-grow-1 overflow-auto p-3 p-md-4">
                 {% for message in messages %}
+                {% if message.is_deleted %}
+                <div
+                    class="mb-3 d-flex {% if message.author == request.user %}justify-content-end{% else %}justify-content-start{% endif %}">
+                    <div style="background: rgba(220, 53, 69, 0.10) !important"
+                        class="message-box p-3 {% if message.author == request.user %}message-own{% else %}message-other{% endif %}">
+                        <div class="fw-bold mb-1 ">
+                            {{ message.author.username }}
+                            <small class="text-secondary">{{ message.created_at|date:"H:i" }}</small>
+                        </div>
+
+
+                        <div class="message-text">
+                            <div class="deleted-message">Wiadomość usunięta</div>
+                        </div>
+                    </div>
+                </div>
+                {%else %}
+
+
                 <div
                     class="mb-3 d-flex {% if message.author == request.user %}justify-content-end{% else %}justify-content-start{% endif %}">
                     <div
@@ -96,10 +115,29 @@
                             <small class="text-secondary">{{ message.created_at|date:"H:i" }}</small>
                         </div>
                         <div class="message-text">
-                            {{ message.content }}
+                            {% if message.content %}
+                            <div class="mb-2">{{ message.content }}</div>
+                            {% endif %}
+
+                            {% if message.image %}
+                            <div class="mb-2">
+                                <img src="{{ message.image.url }}" alt="Załączone zdjęcie"
+                                    class="chat-message-image rounded">
+                            </div>
+                            {% endif %}
+
+                            {% if message.audio %}
+                            <div class="mt-2 audio-wrapper">
+                                <audio controls preload="metadata" class="chat-audio-player">
+                                    <source src="{{ message.audio.url }}">
+                                    Twoja przeglądarka nie obsługuje odtwarzania audio.
+                                </audio>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
+                {% endif %}
                 {% empty %}
                 <div class="text-center text-secondary mt-5">
                     Brak wiadomości.
@@ -109,14 +147,52 @@
 
             <div class="border-top p-3 chat-input-bar">
                 {% if active_channel %}
-                <form id="chat-form">
+
+
+
+
+
+
+
+                <form method="post" action="{% url 'send_attachment' active_channel.id %}" enctype="multipart/form-data"
+                    class="border-top p-3 chat-input-bar">
                     {% csrf_token %}
-                    <div class="input-group">
-                        <input type="text" id="chat-message-input" class="form-control"
-                            placeholder="Napisz wiadomość...">
+                    <div class="input-group mb-2">
+                        <input type="text" name="content" class="form-control"
+                            placeholder="Napisz wiadomość lub dodaj załącznik...">
                         <button type="submit" class="btn btn-discord text-white">Wyślij</button>
                     </div>
+
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label for="id_image" class="form-label small text-secondary">Zdjęcie</label>
+                            <input type="file" id="id_image" name="image" class="form-control"
+                                accept="image/png,image/jpeg,image/jpg,image/webp">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="id_audio" class="form-label small text-secondary">Wiadomość głosowa /
+                                audio</label>
+                            <input type="file" id="id_audio" name="audio" class="form-control" accept="audio/*">
+                        </div>
+                    </div>
                 </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 {% endif %}
             </div>
         </div>

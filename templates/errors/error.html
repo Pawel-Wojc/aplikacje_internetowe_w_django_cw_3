@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ status_code }}{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+
+
+    <img src="https://http.cat/{{ status_code }}" alt="HTTP Cat {{ status_code }}" class="img-fluid rounded shadow mb-4"
+        style="max-width: 420px;">
+
+    <div>
+        <a href="{% url 'chat_home' %}" class="btn btn-discord text-white">
+            Wróć do czatu
+        </a>
+    </div>
+</div>
+{% endblock %}

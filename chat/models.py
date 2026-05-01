@@ -49,8 +49,12 @@ class Message(models.Model):
         null=True,
         blank=True
     )
+        
     class Meta:
         ordering = ['created_at']
+        permissions = [
+            ('can_soft_delete_message', 'Can mark message as deleted'),
+        ]
 
     def __str__(self):
         return f'{self.author} -> {self.channel}: {self.content[:30]}'

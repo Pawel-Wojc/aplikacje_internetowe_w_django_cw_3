@@ -6,13 +6,20 @@ from .models import CustomUser
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
-    list_display = ('id', 'username', 'email', 'is_staff', 'is_superuser')
-    list_filter = ('is_staff', 'is_superuser', 'groups')
-    search_fields = ('username', 'email')
-    ordering = ('id',)
+    list_display = ('email', 'username', 'is_staff', 'is_active')
+    list_filter = ('is_staff', 'is_active', 'groups')
+    search_fields = ('email', 'username')
+    ordering = ('email',)
 
-    fieldsets = UserAdmin.fieldsets + (
-        ('Profil użytkownika', {
-            'fields': ('avatar', 'bio')
+    fieldsets = (
+        (None, {'fields': ('email', 'username', 'password')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login',)}),
+    )
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'username', 'password1', 'password2', 'is_active', 'is_staff', 'groups'),
         }),
     )
