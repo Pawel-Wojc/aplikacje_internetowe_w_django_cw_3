@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Logowanie{% endblock %}
+
+{% block content %}
+<div class="container d-flex align-items-center justify-content-center min-vh-100">
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="auth-card p-4 p-md-5">
+            <h1 class="h3 text-center mb-4">Zaloguj się</h1>
+
+            <form method="post">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    Nieprawidłowy login lub hasło.
+                </div>
+                {% endif %}
+
+                <div class="mb-3">
+
+                    {{ form.username }}
+                </div>
+
+                <div class="mb-4">
+
+                    {{ form.password }}
+                </div>
+
+                <button type="submit" class="btn btn-discord text-white w-100">Zaloguj</button>
+                <input type="hidden" name="next" value="{{ next }}">
+            </form>
+
+            <p class="text-center mt-4 mb-0">
+                Nie masz konta? <a href="{% url 'register' %}">Zarejestruj się</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

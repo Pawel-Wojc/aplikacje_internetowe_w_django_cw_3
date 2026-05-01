@@ -1,0 +1,256 @@
+{% extends 'base.html' %}
+
+{% block title %}Chat{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <div class="row g-0 vh-100">
+
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center px-3 px-md-4 py-3 border-bottom chat-topbar">
+
+                <div class="d-flex align-items-center gap-2">
+                    <a href="{% url 'chat_home' %}?mode=dm"
+                        class="btn {% if mode == 'dm' %}btn-discord text-white{% else %}btn-outline-light{% endif %} btn-sm">
+                        DM
+                    </a>
+
+                    <a href="{% url 'chat_home' %}?mode=groups"
+                        class="btn {% if mode == 'groups' %}btn-discord text-white{% else %}btn-outline-light{% endif %} btn-sm">
+                        Grupy
+                    </a>
+                </div>
+
+                <div class="fw-bold">
+                    {% if mode == 'groups' %}
+                    {{ active_title }}
+                    {% else %}
+                    {{ active_title }}
+                    {% endif %}
+                </div>
+
+                <div>
+                    <button class="btn btn-outline-light btn-sm d-lg-none" type="button" data-bs-toggle="offcanvas"
+                        data-bs-target="#chatSidebar" aria-controls="chatSidebar">
+                        Menu
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-xl-2 d-none d-lg-block chat-sidebar border-end">
+            <div class="p-3">
+                {% if mode == 'groups' %}
+                <h6 class="text-uppercase text-secondary mb-3">Moje kanały</h6>
+                <div class="list-group list-group-flush mb-4">
+                    {% for channel in channels %}
+                    <a href="{% url 'channel_room' channel.id %}"
+                        class="list-group-item list-group-item-action chat-list-item {% if active_channel and active_channel.id == channel.id %}active{% endif %}">
+                        # {{ channel.name }}
+                    </a>
+                    {% empty %}
+                    <div class="text-secondary small">Nie należysz jeszcze do żadnego kanału.</div>
+                    {% endfor %}
+                </div>
+
+                <h6 class="text-uppercase text-secondary mb-3">Dostępne kanały</h6>
+                <div class="list-group list-group-flush">
+                    {% for channel in available_channels %}
+                    <div class="list-group-item chat-list-item d-flex justify-content-between align-items-center">
+                        <span># {{ channel.name }}</span>
+                        <a href="{% url 'join_channel' channel.id %}" class="btn btn-sm btn-discord text-white">
+                            Dołącz
+                        </a>
+                    </div>
+                    {% empty %}
+                    <div class="text-secondary small">Brak dostępnych kanałów.</div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <h6 class="text-uppercase text-secondary mb-3">Rozmowy</h6>
+                <div class="list-group list-group-flush">
+                    {% for dm in dm_threads %}
+                    <a href="{% url 'channel_room' dm.id %}"
+                        class="list-group-item list-group-item-action chat-list-item {% if active_channel and active_channel.id == dm.id %}active{% endif %}">
+                        {% for member in dm.members.all %}
+                        {% if member != request.user %}
+                        {{ member.username }}
+                        {% endif %}
+                        {% endfor %}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-6 col-xl-7 d-flex flex-column chat-main">
+            <div id="chat-messages" class="flex-grow-1 overflow-auto p-3 p-md-4">
+                {% for message in messages %}
+                <div
+                    class="mb-3 d-flex {% if message.author == request.user %}justify-content-end{% else %}justify-content-start{% endif %}">
+                    <div
+                        class="message-box p-3 {% if message.author == request.user %}message-own{% else %}message-other{% endif %}">
+                        <div class="fw-bold mb-1">
+                            {{ message.author.username }}
+                            <small class="text-secondary">{{ message.created_at|date:"H:i" }}</small>
+                        </div>
+                        <div class="message-text">
+                            {{ message.content }}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center text-secondary mt-5">
+                    Brak wiadomości.
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="border-top p-3 chat-input-bar">
+                {% if active_channel %}
+                <form id="chat-form">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input type="text" id="chat-message-input" class="form-control"
+                            placeholder="Napisz wiadomość...">
+                        <button type="submit" class="btn btn-discord text-white">Wyślij</button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-xl-3 d-none d-lg-block chat-sidebar border-start">
+            <div class="p-3">
+
+                {% if mode == 'groups' %}
+                <h6 class="text-uppercase text-secondary mb-3">Użytkownicy</h6>
+                <div class="list-group list-group-flush">
+                    {% for member in members %}
+                    <div class="list-group-item chat-list-item">{{ member.username }}</div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <h6 class="text-uppercase text-secondary mb-3">Użytkownicy</h6>
+                <div class="list-group list-group-flush">
+                    {% for user_item in all_users %}
+                    <a href="{% url 'start_dm' user_item.id %}"
+                        class="list-group-item list-group-item-action chat-list-item">
+                        {{ user_item.username }}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="offcanvas offcanvas-start text-bg-dark d-lg-none" tabindex="-1" id="chatSidebar"
+    aria-labelledby="chatSidebarLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="chatSidebarLabel">
+            {% if mode == 'groups' %}Kanały{% else %}Rozmowy{% endif %}
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        {% if mode == 'groups' %}
+        <div class="list-group list-group-flush">
+            {% for channel in channels %}
+            <a href="#" class="list-group-item list-group-item-action chat-list-item">
+                # {{ channel.name }}
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="list-group list-group-flush">
+            {% for dm in dm_threads %}
+            <a href="#" class="list-group-item list-group-item-action chat-list-item">
+                {{ dm.username }}
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+
+
+
+
+
+
+
+{% if active_channel %}
+<script>
+    const channelId = "{{ active_channel.id }}";
+    const chatMessages = document.getElementById("chat-messages");
+    const chatForm = document.getElementById("chat-form");
+    const chatInput = document.getElementById("chat-message-input");
+    const currentUsername = "{{ request.user.username|escapejs }}";
+    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+    const chatSocket = new WebSocket(
+        `${protocol}://${window.location.host}/ws/chat/${channelId}/`
+    );
+    chatSocket.onopen = function () {
+        console.log("WebSocket OPEN");
+    };
+
+    chatSocket.onmessage = function (e) {
+        console.log("MESSAGE FROM WS:", e.data);
+        const data = JSON.parse(e.data);
+
+        const isOwn = data.author === currentUsername;
+
+        const wrapper = document.createElement("div");
+        wrapper.className = `mb-3 d-flex ${isOwn ? "justify-content-end" : "justify-content-start"}`;
+
+        wrapper.innerHTML = `
+        <div class="message-box p-3 ${isOwn ? "message-own" : "message-other"}">
+            <div class="fw-bold mb-1">
+                ${data.author}
+                <small class="${isOwn ? "" : "text-secondary"}">${data.created_at}</small>
+            </div>
+            <div class="message-text">${data.message}</div>
+        </div>
+    `;
+
+        chatMessages.appendChild(wrapper);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    };
+
+    chatSocket.onerror = function (e) {
+        console.log("WebSocket ERROR:", e);
+    };
+    chatSocket.onclose = function (e) {
+        console.log("WebSocket CLOSED:", e);
+    };
+
+    chatForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const message = chatInput.value.trim();
+        console.log("TRY SEND:", message);
+
+        if (!message) return;
+
+        chatSocket.send(JSON.stringify({
+            message: message
+        }));
+
+        chatInput.value = "";
+    });
+</script>
+{% endif %}
+
+
+
+
+
+
+{% endblock %}

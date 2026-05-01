@@ -1,0 +1,59 @@
+# nie tworze serwerów, jest tak jakby jeden wielki serwer z kanałami tekstowych
+
+
+1. System użytkowników
+Rejestracja nowych użytkowników (login, email, hasło)
+Logowanie i wylogowanie
+Walidacja danych (np. unikalny login/email)
+Możliwość edycji profilu (np. avatar, opis)
+
+2. Role i uprawnienia
+System musi zawierać co najmniej 3 role:
+Administrator:
+    -pełny dostęp do wszystkich funkcji
+    -zarządzanie użytkownikami i kanałami
+Moderator
+    -zarządzanie wiadomościami
+    -możliwość blokowania użytkowników
+    (nie rozdzielam na moderator per kanał)
+Użytkownik
+    -wysyłanie wiadomości
+    -korzystanie z kanałów
+
+Dodatkowo:
+Role muszą być przypisywane dynamicznie
+System uprawnień musi ograniczać dostęp do funkcji
+
+3. Komunikacja
+Kanały (publiczne/grupowe)
+Tworzenie kanałów tekstowych (moderator)
+Dołączanie do kanałów 
+Wyświetlanie historii wiadomości
+
+Wiadomości prywatne (DM) 1 na 1
+
+
+4. Multimedia
+Wysyłanie:
+ - wiadomości tekstowych
+ - obrazków
+ - wiadomości głosowych (np. nagrania audio)
+
+5. Moderacja
+Blokowanie użytkowników
+Usuwanie wiadomości
+
+Frontend
+Interfejs inspirowany Discordem
+Responsywność (działa na telefonie i komputerze)
+Wykorzystanie frameworka Bootstrap
+
+Backend Framework: Django (zalecane)
+
+Możliwe rozszerzenia:
+Django REST Framework (API)
+WebSockets (np. Django Channels) do komunikacji w czasie rzeczywistym
+
+
+Obsługa błędów Własna strona błędu 404:
+https://www.geeksforgeeks.org/python/python-django-handling-custom-error-page/

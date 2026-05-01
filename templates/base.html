@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Discord Clone{% endblock %}</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #313338, #1e1f22);
+            color: white;
+        }
+
+        .auth-card {
+            background: #2b2d31;
+            border: 1px solid #3f4147;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .form-control,
+        .form-control:focus {
+            background: #1e1f22;
+            border: 1px solid #3f4147;
+            color: white;
+        }
+
+        .form-label {
+            color: #d7dbe0;
+            font-weight: 600;
+        }
+
+        .btn-discord {
+            background: #5865f2;
+            border: none;
+        }
+
+        .btn-discord:hover {
+            background: #4752c4;
+        }
+
+        a {
+            color: #00a8fc;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .chat-topbar {
+            background: #2b2d31;
+            border-color: #3f4147 !important;
+        }
+
+        .chat-sidebar {
+            background: #2b2d31;
+            height: calc(100vh - 73px);
+            overflow-y: auto;
+        }
+
+        .chat-main {
+            height: calc(100vh - 73px);
+            background: #313338;
+        }
+
+        .chat-input-bar {
+            background: #2b2d31;
+            border-color: #3f4147 !important;
+        }
+
+        .chat-list-item {
+            background: transparent !important;
+            border: 1px solid transparent !important;
+            color: #d7dbe0 !important;
+            border-radius: 10px !important;
+            margin-bottom: 6px;
+        }
+
+        .chat-list-item:hover {
+            background: #3a3d44 !important;
+            color: white !important;
+        }
+
+        .message-box {
+            background: #2b2d31;
+            border: 1px solid #3f4147;
+            border-radius: 14px;
+        }
+
+        .text-light-emphasis-custom {
+            color: #d7dbe0;
+        }
+
+        .offcanvas {
+            background: #2b2d31;
+        }
+
+        .message-box {
+            max-width: 60%;
+            border-radius: 14px;
+            padding: 10px 14px;
+            word-wrap: break-word;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .message-other {
+            background-color: #2f3136;
+            color: #f1f1f1;
+            border-top-left-radius: 6px;
+        }
+
+        .message-own {
+            background-color: #2e7d5a;
+            color: #ffffff;
+            border-top-right-radius: 6px;
+        }
+
+        .message-own .text-secondary,
+        .message-own small {
+            color: rgba(255, 255, 255, 0.75) !important;
+        }
+
+        .message-text {
+            margin: 0;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+
+<body>
+    {% block content %}{% endblock %}
+</body>
+
+</html>
