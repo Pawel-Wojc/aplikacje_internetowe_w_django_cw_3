@@ -42,9 +42,10 @@ CHANNEL_LAYERS = {
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.staticfiles',
+    
     #dopisane
     'daphne',
+    'django.contrib.staticfiles',
     'accounts',
     'chat',
     'bootstrap5',
