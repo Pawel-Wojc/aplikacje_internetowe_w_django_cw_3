@@ -1,7 +1,7 @@
-# accounts/models.py
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import FileExtensionValidator, MaxLengthValidator
+
 
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
@@ -16,12 +16,13 @@ class CustomUser(AbstractUser):
         blank=True,
         validators=[MaxLengthValidator(100)]
     )
+    is_blocked = models.BooleanField(default=False)
 
-    blocked_channels = models.ManyToManyField(
-        'chat.Channel',
-        related_name='blocked_by_users',
-        blank=True
-    )
+    class Meta:
+        permissions = [
+            ('can_block_user', 'Can block and unblock user'),
+        ]
+
 
     def __str__(self):
         return self.username

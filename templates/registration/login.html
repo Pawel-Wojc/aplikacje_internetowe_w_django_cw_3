@@ -11,9 +11,11 @@
             <form method="post">
                 {% csrf_token %}
 
-                {% if form.errors %}
+                {% if form.non_field_errors %}
                 <div class="alert alert-danger">
-                    Nieprawidłowy login lub hasło.
+                    {% for error in form.non_field_errors %}
+                    <div>{{ error }}</div>
+                    {% endfor %}
                 </div>
                 {% endif %}
 

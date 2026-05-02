@@ -31,6 +31,20 @@ class CustomLoginForm(AuthenticationForm):
         'placeholder': 'Hasło'
     }))
 
+    error_messages = {
+        **AuthenticationForm.error_messages,
+        'blocked': 'Konto jest zablokowane. Skontaktuj się z administratorem.',
+    }
+
+    def confirm_login_allowed(self, user):
+        super().confirm_login_allowed(user)
+
+        if getattr(user, 'is_blocked', False):
+            raise forms.ValidationError(
+                self.error_messages['blocked'],
+                code='blocked',
+            )
+
 User = get_user_model()
 class UserSettingsForm(forms.ModelForm):
     username = forms.CharField(
